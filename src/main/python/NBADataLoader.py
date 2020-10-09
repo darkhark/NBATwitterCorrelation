@@ -6,9 +6,10 @@ from pandas import DataFrame
 class NBADataLoader:
 
     @staticmethod
-    def getPlayerSeasonalBoxData(fullName: str, year: int) -> DataFrame.__class__:
+    def getPlayerSeasonalGameStats(fullName: str, year: int) -> DataFrame.__class__:
         """
-        Retrieve a player's seasonal data from the nba_api based on their season
+        Retrieve a player's seasonal stats from the nba_api. Each row will be one game in the
+        season and each column is a different statistic. 
 
         :param fullName: The first and last name of the player player separated by a space
         :param year: The year for the season when the data should be obtained.
