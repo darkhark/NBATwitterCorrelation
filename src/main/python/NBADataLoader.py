@@ -27,7 +27,3 @@ class NBADataLoader:
     def _getPlayerStats(playerID: str, year: int) -> DataFrame.__class__:
         gamelog = playergamelog.PlayerGameLog(player_id=playerID, season=str(year))
         return gamelog.get_data_frames()[0]
-
-
-df = NBADataLoader.getPlayerSeasonalBoxData("LeBron James", 2018)
-print(df.columns)
