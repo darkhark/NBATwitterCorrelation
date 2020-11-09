@@ -10,7 +10,7 @@ use_plugin('python.pycharm')
 use_plugin('pypi:pybuilder_pip_tools', '==1.*')
 
 
-name = "TextMining"
+name = "NBATwitterCorrelation"
 default_task = "publish"
 
 
