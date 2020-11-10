@@ -1,3 +1,8 @@
+import json
+
+with open('docs/TwitterHandles/twitter_handles.json') as json_file:
+    twitter_handles = json.load(json_file)
+
 ### Instantiate the NBAPlayer objects ###
 
 # players = []
