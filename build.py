@@ -13,7 +13,6 @@ use_plugin('pypi:pybuilder_pip_tools', '==1.*')
 name = "NBATwitterCorrelation"
 default_task = "publish"
 
-
 @init
 def set_properties(project):
     project.set_property('flake8_break_build', True)
