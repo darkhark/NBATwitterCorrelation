@@ -35,6 +35,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: re.sub(r'@[A-Za-z0-9_]+', '', tweet)) \
         .map(lambda tweet: re.sub(r'#[A-Za-z0-9_]+', '', tweet)) \
         .map(lambda tweet: re.sub(r'[^a-zA-z0-9\s]', '', tweet)) \
+        .map(lambda tweet: re.sub(r'\n', '', tweet)) \
         .map(lambda tweet: emoji_regrex_pattern.sub(r'', tweet)) \
         .map(lambda tweet: tweet.lower()) \
         .map(lambda tweet: re.sub(stopwordsRegexPattern, '', tweet)) \
@@ -49,7 +50,7 @@ def removeExcessiveSpace(tweet):
         tweet = tweet.replace("  ", " ")
     return tweet
 
-# tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
-# print(tweetsDF)
-# tweetsDF = cleanTweets(tweetsDF)
-# print(tweetsDF)
+tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
+print(tweetsDF)
+tweetsDF = cleanTweets(tweetsDF)
+print(tweetsDF)
