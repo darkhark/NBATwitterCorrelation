@@ -50,7 +50,8 @@ def removeExcessiveSpace(tweet):
         tweet = tweet.replace("  ", " ")
     return tweet
 
-tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
-print(tweetsDF)
-tweetsDF = cleanTweets(tweetsDF)
-print(tweetsDF)
+
+# tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
+# print(tweetsDF)
+# tweetsDF = cleanTweets(tweetsDF)
+# print(tweetsDF)
