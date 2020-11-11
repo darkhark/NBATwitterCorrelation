@@ -1,0 +1,14 @@
+import loaders.TwitterHandleLoader as thl
+
+
+class NBAPlayer:
+    def __init__(self, name: str):
+        """
+        Creates the NBAPlayer object.
+
+        @param name: The player's first and last name as a single string with correct capitalization.
+        @type name: str
+        """
+        self.name = name
+        self.handle = thl.getTwitterHandle(self.name)
+
