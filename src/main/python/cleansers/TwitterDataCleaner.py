@@ -39,8 +39,8 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: tweet.lower()) \
         .map(lambda tweet: re.sub(stopwordsRegexPattern, '', tweet)) \
         .map(lambda tweet: removeExcessiveSpace(tweet))
-    cleanDF.apply(lambda x: np.nan if isinstance(x, str) and (x.isspace() or not x) else x)
-    cleanDF.dropna(subset=['tweet'], inplace=True)
+    cleanDF = cleanDF.replace(r'^\s*$', np.nan, regex=True)
+    cleanDF = cleanDF.dropna(subset=['tweet'])
     return cleanDF
 
 
@@ -49,7 +49,7 @@ def removeExcessiveSpace(tweet):
         tweet = tweet.replace("  ", " ")
     return tweet
 
-# tweetsDF = tdl.getPlayerTweetsAsDF('KingJames', '2018-10-12', '2019-04-10')
-# print(tweetsDF)
-# tweetsDF = cleanTweets(tweetsDF)
-# print(tweetsDF)
+tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
+print(tweetsDF)
+tweetsDF = cleanTweets(tweetsDF)
+print(tweetsDF)
