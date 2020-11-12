@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 
 def getAllTwitterHandles():
@@ -9,7 +10,8 @@ def getAllTwitterHandles():
     the players' Twitter handles
     @rtype: dict
     """
-    with open('docs/Data/twitter_handles.json') as json_file:
+    location = str(Path(__file__).parent.parent.parent.parent.parent / "docs") + "/Data/twitter_handles.json"
+    with open(location, 'r') as json_file:
         twitter_handles = json.load(json_file)
     return twitter_handles
 

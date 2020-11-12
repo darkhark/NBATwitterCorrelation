@@ -51,3 +51,7 @@ def getAllTweetsDuringSeasons(handle: str):
         dirtyTweets = tdl.getPlayerTweetsAsDF(handle, startDate, endDate)
         tweetsDict[year] = tdc.cleanTweets(dirtyTweets)
     return tweetsDict
+
+# Test Code
+# lebron = NBAPlayer('LeBron James')
+# print(lebron.name, ":", lebron.handle)

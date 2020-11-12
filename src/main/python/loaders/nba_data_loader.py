@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import playergamelog
@@ -35,6 +36,7 @@ def getNBASeasonRanges():
     of that season.
     @rtype: dictionary
     """
-    with open('docs/Data/nba_season_ranges') as json_file:
+    location = str(Path(__file__).parent.parent.parent.parent.parent / "docs") + "/Data/nba_season_ranges.json"
+    with open(location, 'r') as json_file:
         years = json.load(json_file)
     return years
