@@ -4,10 +4,11 @@ from nrclex import NRCLex
 
 def getEmotions(text):
     """
-    Get emotion affect frequencies for the input text
+    Get emotion affect frequencies for the input text. The values returned are continuous numbers between 0 & 1.
+    Values are returned for the following emotions: fear, anger, trust, surprise, sadness, disgust, joy, anticipation
 
     :param text: the input text
-    :return: a dict with the following emtoins: fear, anger, trust, surprise, sadness, disgust, joy, anticipation
+    :return: a dict with a continuous value between 0-1 for each emotion
     """
     textObject = NRCLex(text)
     emtionsDict = textObject.affect_frequencies
