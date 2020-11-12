@@ -1,3 +1,5 @@
+import json
+
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import playergamelog
 from pandas import DataFrame
@@ -12,16 +14,27 @@ def getPlayerSeasonalGameStats(fullName: str, year: int) -> DataFrame.__class__:
     :param year: The year for the season when the data should be obtained.
     :return: A pandas dataframe containing box summary stats for a single player's season
     """
-    playerID = _getPlayerID(fullName)
-    return _getPlayerStats(playerID, year)
+    playerID = __getPlayerID(fullName)
+    return __getPlayerStats(playerID, year)
 
 
-def _getPlayerID(fullName: str) -> str:
+def __getPlayerID(fullName: str) -> str:
     player_dict = players.get_players()
     player = [player for player in player_dict if player['full_name'] == fullName][0]
     return player['id']
 
 
-def _getPlayerStats(playerID: str, year: int) -> DataFrame.__class__:
+def __getPlayerStats(playerID: str, year: int) -> DataFrame.__class__:
     gamelog = playergamelog.PlayerGameLog(player_id=playerID, season=str(year))
     return gamelog.get_data_frames()[0]
+
+
+def getNBASeasonRanges():
+    """
+    @return: A dictionary where the key is the year and the value is the start and end dates
+    of that season.
+    @rtype: dictionary
+    """
+    with open('docs/Data/nba_season_ranges') as json_file:
+        years = json.load(json_file)
+    return years
