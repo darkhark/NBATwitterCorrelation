@@ -24,7 +24,6 @@ def __getPlayerID(fullName: str) -> str:
     player = None
     for person in player_dict:
         if person['full_name'] == fullName:
-            print('Name matched!')
             player = person
     assert (player is not None), 'Player name does not exist!'
     return player['id']

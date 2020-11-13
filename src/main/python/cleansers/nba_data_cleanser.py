@@ -5,8 +5,8 @@ import pandas as pd
 
 
 def cleanNBAData(df):
-    cleanDF = df[['FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA', 'GAME_DATE']]  # double brackets for columns
-    cleanDF = cleanDF['GAME_DATE'].map(lambda date: date.replace(',', ''))\
+    cleanDF = df[['GAME_DATE', 'PTS', 'FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA']]  # double brackets for columns
+    cleanDF['GAME_DATE'] = cleanDF['GAME_DATE'].map(lambda date: date.replace(',', ''))\
         .map(lambda date: datetime.strptime(date, '%b %d %Y'))
     return cleanDF
 
@@ -14,5 +14,5 @@ def cleanNBAData(df):
 pd.set_option('display.max_columns', None)
 dfnba = ndl.getPlayerSeasonalGameStats('LeBron James', 2019)
 dfnba = cleanNBAData(dfnba)
-print(dfnba.dtypes)
+print(dfnba)
 
