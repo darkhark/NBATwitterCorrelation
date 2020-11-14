@@ -2,11 +2,22 @@ import loaders.twitter_handle_loader as thl
 import loaders.nba_data_loader as sl
 import loaders.twitter_data_loader as tdl
 import cleansers.twitter_data_cleaner as tdc
+import cleansers.nba_data_cleanser as ndc
 
 
 class NBAPlayer:
-    # TODO: Create a private constructor so one player can be called multiple times in a session
-    #  without recreating the player object.
+    allPlayers = {}
+
+    def __new__(cls, name, *args, **kwargs):
+        """
+        Only used for cache maintenance. Called before init.
+        The super in here I believe refers to __init__
+        """
+        if name in cls.allPlayers.keys():
+            return cls.allPlayers[name]
+        player = super(NBAPlayer, cls).__new__(cls)
+        return player
+
     def __init__(self, name: str):
         """
         Creates the NBAPlayer object.
@@ -14,10 +25,13 @@ class NBAPlayer:
         @param name: The player's first and last name as a single string with correct capitalization.
         @type name: str
         """
+        if name in NBAPlayer.allPlayers.keys():
+            return
         self.name = name
         self.handle = thl.getTwitterHandle(self.name)
-        self.stats = getEverySeasonStats(self.name)
+        self.plusMinus, self.avgPoints, self.avgAcc = getEverySeasonStats(self.name)
         self.tweets = getAllTweetsDuringSeasons(self.handle)
+        NBAPlayer.allPlayers[name] = self
 
 
 def getEverySeasonStats(name: str):
@@ -27,12 +41,13 @@ def getEverySeasonStats(name: str):
     all the stats in that year.
     @rtype: dictionary
     """
-    # TODO: Once nba_data_cleaner is done, clean the stats before adding them to the dict.
-    #  Look at getAllTweetsDuringSeason as reference.
     statDict = {}
+    avgPointsDict = {}
+    avgAccDict = {}
     for year in sl.getNBASeasonRanges():
-        statDict[year] = sl.getPlayerSeasonalGameStats(name, int(year))
-    return statDict
+        dirtyStats = sl.getPlayerSeasonalGameStats(name, int(year))
+        statDict[year], avgPointsDict[year], avgAccDict = ndc.cleanNBAData(dirtyStats)
+    return statDict, avgPointsDict, avgAccDict
 
 
 def getAllTweetsDuringSeasons(handle: str):
@@ -52,6 +67,20 @@ def getAllTweetsDuringSeasons(handle: str):
         tweetsDict[year] = tdc.cleanTweets(dirtyTweets)
     return tweetsDict
 
-# Test Code
+
+# Test Code - cache works
 # lebron = NBAPlayer('LeBron James')
 # print(lebron.name, ":", lebron.handle)
+# print(NBAPlayer.allPlayers)
+# lebron2 = NBAPlayer('LeBron James')
+# print(NBAPlayer.allPlayers)
+# harden = NBAPlayer('James Harden')
+# print(NBAPlayer.allPlayers)
+
+# Test Code - view stats and tweets
+# lebron = NBAPlayer('LeBron James')
+# print(NBAPlayer.allPlayers[lebron.name].plusMinus['2018'])
+# print(NBAPlayer.allPlayers[lebron.name].tweets['2018'])
+# harden = NBAPlayer('James Harden')
+# print(NBAPlayer.allPlayers[harden.name].plusMinus['2018'])
+# print(NBAPlayer.allPlayers[harden.name].tweets['2018'])
