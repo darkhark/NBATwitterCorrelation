@@ -2,8 +2,10 @@ from pandas import DataFrame
 from nltk.corpus import stopwords
 import numpy as np
 import re
+
 # import nltk
 # nltk.download('stopwords')  # Uncomment if needed
+# import pandas as pd # test only
 # import loaders.twitter_data_loader as tdl  # for test code
 
 emoji_regrex_pattern = re.compile(pattern="["
@@ -26,7 +28,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
     """
     stopWords = stopwords.words('english')
     stopwordsRegexPattern = r'\b(?:{})\b'.format('|'.join(stopWords))
-    cleanDF = df
+    cleanDF = df.copy()
     # removes URLs, then mentions, then hashtags, then punctuation,
     # then newlines, then emojis, converts everything to lowercase,
     # removes stopping words, then removes excess spacing.
@@ -42,6 +44,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: __removeExcessiveSpace(tweet))
     cleanDF = cleanDF.replace(r'^\s*$', np.nan, regex=True)
     cleanDF = cleanDF.dropna(subset=['tweet'])
+    cleanDF['date'] = cleanDF['date'].map(lambda date: date.date())
     return cleanDF
 
 
@@ -51,6 +54,7 @@ def __removeExcessiveSpace(tweet):
     return tweet
 
 
+# pd.set_option('display.max_columns', None)
 # tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
 # print(tweetsDF)
 # tweetsDF = cleanTweets(tweetsDF)

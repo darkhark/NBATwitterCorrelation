@@ -21,7 +21,11 @@ def getPlayerSeasonalGameStats(fullName: str, year: int) -> DataFrame.__class__:
 
 def __getPlayerID(fullName: str) -> str:
     player_dict = players.get_players()
-    player = [player for player in player_dict if player['full_name'] == fullName][0]
+    player = None
+    for person in player_dict:
+        if person['full_name'] == fullName:
+            player = person
+    assert (player is not None), 'Player name does not exist!'
     return player['id']
 
 
