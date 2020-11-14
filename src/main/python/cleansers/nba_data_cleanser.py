@@ -1,21 +1,28 @@
 from datetime import datetime
-
+import pandas as pd
 # import loaders.nba_data_loader as ndl
-# import pandas as pd
 
 
-def cleanNBAData(df):
+def cleanNBAData(df: pd.DataFrame.__class__):
+    """
+    Removes stats not beneficial to the analysis while creating new columns that fit closer to our main goal.
+
+    @param df: The dataframe to clean. Should come from nba_data_loader
+    @return: A dataframe consisting of GAME_DATE, PlusMinusPoints, and PlusMinusAcc. The plus minus column values
+    are positive if they're above average and negative otherwise.
+    @rtype: Dataframe
+    """
     cleanDF = df[['GAME_DATE', 'PTS', 'FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA']].copy()  # double brackets for columns
     cleanDF['GAME_DATE'] = cleanDF['GAME_DATE'].map(lambda date: date.replace(',', ''))\
         .map(lambda date: datetime.strptime(date, '%b %d %Y'))
-    cleanDF = getAverageAndAccuracyPlusMinus(cleanDF)
+    cleanDF = __getAverageAndAccuracyPlusMinus(cleanDF)
     return cleanDF
 
 
-def getAverageAndAccuracyPlusMinus(df):
+def __getAverageAndAccuracyPlusMinus(df):
     numRows = len(df.index)
-    avgDF, avgPoints = getPlusMinusPoints(df, numRows)
-    avgDF, avgAcc = getPlusMinusAcc(avgDF, numRows)
+    avgDF, avgPoints = __getPlusMinusPoints(df, numRows)
+    avgDF, avgAcc = __getPlusMinusAcc(avgDF, numRows)
     avgDF = avgDF.drop(
         ['PTS', 'FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA',
          'ShotsMade', 'ShotsAttempted', 'PlayerAvg', 'GameAcc', 'accAvg'],
@@ -23,7 +30,7 @@ def getAverageAndAccuracyPlusMinus(df):
     return avgDF, avgPoints, avgAcc
 
 
-def getPlusMinusPoints(df, numRows):
+def __getPlusMinusPoints(df, numRows):
     pointsDF = df.copy()
     pointsDF['PlayerAvg'] = pointsDF['PTS'].sum() / numRows
     pointsDF['PlusMinusPoints'] = pointsDF['PTS'] - pointsDF['PlayerAvg']
@@ -31,7 +38,7 @@ def getPlusMinusPoints(df, numRows):
     return pointsDF, avg
 
 
-def getPlusMinusAcc(df, numRows):
+def __getPlusMinusAcc(df, numRows):
     accDF = df.copy()
     accDF['ShotsMade'] = accDF['FGM'] + accDF['FG3M'] + accDF['FTM']
     accDF['ShotsAttempted'] = accDF['FGA'] + accDF['FG3A'] + accDF['FTA']
