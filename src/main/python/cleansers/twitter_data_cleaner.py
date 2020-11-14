@@ -28,7 +28,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
     """
     stopWords = stopwords.words('english')
     stopwordsRegexPattern = r'\b(?:{})\b'.format('|'.join(stopWords))
-    cleanDF = df
+    cleanDF = df.copy()
     # removes URLs, then mentions, then hashtags, then punctuation,
     # then newlines, then emojis, converts everything to lowercase,
     # removes stopping words, then removes excess spacing.
