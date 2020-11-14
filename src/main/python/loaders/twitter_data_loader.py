@@ -17,11 +17,11 @@ def getPlayerTweets(handle: str, since: str, until: str) -> dict:
 
 def getPlayerTweetsAsDF(handle: str, since: str, until: str) -> DataFrame.__class__:
     tweetObjectsDict = getPlayerTweets(handle, since, until)
-    tweetsDict = getTweetsDatesAndIDsOnly(tweetObjectsDict)
+    tweetsDict = __getTweetsDatesAndIDsOnly(tweetObjectsDict)
     return DataFrame.from_dict(tweetsDict, orient='index', columns=['username', 'date', 'tweet'])
 
 
-def getTweetsDatesAndIDsOnly(tweetsObjectDict: dict) -> dict:
+def __getTweetsDatesAndIDsOnly(tweetsObjectDict: dict) -> dict:
     brokenDownDict = {}
     for key in tweetsObjectDict:
         tweetObj = tweetsObjectDict[key]

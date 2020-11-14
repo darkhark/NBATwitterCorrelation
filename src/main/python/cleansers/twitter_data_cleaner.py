@@ -4,7 +4,7 @@ import numpy as np
 import re
 # import nltk
 # nltk.download('stopwords')  # Uncomment if needed
-import loaders.TwitterDataLoader as tdl
+# import loaders.twitter_data_loader as tdl  # for test code
 
 emoji_regrex_pattern = re.compile(pattern="["
                                           u"\U0001F600-\U0001F64F"  # emoticons
@@ -39,13 +39,13 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: emoji_regrex_pattern.sub(r'', tweet)) \
         .map(lambda tweet: tweet.lower()) \
         .map(lambda tweet: re.sub(stopwordsRegexPattern, '', tweet)) \
-        .map(lambda tweet: removeExcessiveSpace(tweet))
+        .map(lambda tweet: __removeExcessiveSpace(tweet))
     cleanDF = cleanDF.replace(r'^\s*$', np.nan, regex=True)
     cleanDF = cleanDF.dropna(subset=['tweet'])
     return cleanDF
 
 
-def removeExcessiveSpace(tweet):
+def __removeExcessiveSpace(tweet):
     while "  " in tweet:
         tweet = tweet.replace("  ", " ")
     return tweet
