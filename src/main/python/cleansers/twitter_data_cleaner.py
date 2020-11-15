@@ -33,7 +33,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
     # then newlines, then emojis, converts everything to lowercase,
     # removes stopping words, then removes excess spacing.
     # Lastly, empty tweets are removed. The order is important.
-    cleanDF['tweet'] = df['tweet'].map(lambda tweet: re.sub(r'http\S+', '', tweet)) \
+    cleanDF['Tweet'] = df['Tweet'].map(lambda tweet: re.sub(r'http\S+', '', tweet)) \
         .map(lambda tweet: re.sub(r'@[A-Za-z0-9_]+', '', tweet)) \
         .map(lambda tweet: re.sub(r'#[A-Za-z0-9_]+', '', tweet)) \
         .map(lambda tweet: re.sub(r'[^a-zA-z0-9\s]', '', tweet)) \
@@ -43,8 +43,9 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: re.sub(stopwordsRegexPattern, '', tweet)) \
         .map(lambda tweet: __removeExcessiveSpace(tweet))
     cleanDF = cleanDF.replace(r'^\s*$', np.nan, regex=True)
-    cleanDF = cleanDF.dropna(subset=['tweet'])
-    cleanDF['date'] = cleanDF['date'].map(lambda date: date.date())
+    cleanDF = cleanDF.dropna(subset=['Tweet'])
+    cleanDF['TweetDate'] = cleanDF['TweetDate'].map(lambda date: date.date())
+    cleanDF = cleanDF.sort_values('TweetDate')
     return cleanDF
 
 

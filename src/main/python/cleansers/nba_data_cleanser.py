@@ -14,9 +14,10 @@ def cleanNBAData(df: pd.DataFrame.__class__):
     """
     cleanDF = df[['GAME_DATE', 'PTS', 'FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA']].copy()  # double brackets for columns
     cleanDF['GAME_DATE'] = cleanDF['GAME_DATE'].map(lambda date: date.replace(',', ''))\
-        .map(lambda date: datetime.strptime(date, '%b %d %Y'))
-    cleanDF = __getAverageAndAccuracyPlusMinus(cleanDF)
-    return cleanDF
+        .map(lambda date: datetime.strptime(date, '%b %d %Y').date())
+    cleanDF, avgPoints, avgAcc = __getAverageAndAccuracyPlusMinus(cleanDF)
+    cleanDF = cleanDF.sort_values('GAME_DATE')
+    return cleanDF, avgPoints, avgAcc
 
 
 def __getAverageAndAccuracyPlusMinus(df):
