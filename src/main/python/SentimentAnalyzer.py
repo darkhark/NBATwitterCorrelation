@@ -1,4 +1,5 @@
 import pandas as pd
+# pip install --upgrade azure-ai-textanalytics
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
