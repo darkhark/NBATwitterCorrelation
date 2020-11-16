@@ -48,7 +48,7 @@ class NBAPlayer:
         avgAccDict = {}
         for year in ndl.getNBASeasonRanges():
             dirtyStats = ndl.getPlayerSeasonalGameStats(self.name, int(year))
-            statDict[year], avgPointsDict[year], avgAccDict = ndc.cleanNBAData(dirtyStats)
+            statDict[year], avgPointsDict[year], avgAccDict[year] = ndc.cleanNBAData(dirtyStats)
         return statDict, avgPointsDict, avgAccDict
 
     def getEverySeasonTweets(self):
