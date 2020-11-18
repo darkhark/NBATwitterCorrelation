@@ -145,6 +145,18 @@ class NBAPlayer:
         df.loc[lastIndex]['TweetDate'] = gameDate
         return df.tail(1)
 
+    def getAllTweetsAsDict(self):
+        """
+        @return: A dictionary of every tweet from this player as {tweetID: Tweet}
+        @rtype: dictionary
+        """
+        combinedTweetsDF = pd.DataFrame()
+        for tweetsDF in self.tweets.values():
+            if not tweetsDF.empty:
+                combinedTweetsDF = combinedTweetsDF.append(tweetsDF)
+        tweetsDict = dict(zip(combinedTweetsDF.index, combinedTweetsDF['Tweet']))
+        return tweetsDict
+
 
 # pd.set_option('display.max_columns', None)
 # pd.set_option('display.max_rows', None)
@@ -166,3 +178,7 @@ class NBAPlayer:
 # Test Code - merge tweets and stats
 # lebron = NBAPlayer("Kyle Lowry")
 # print(lebron.getAllStatsAndTweetsDF())
+
+# Test Code - player tweets as dictionary
+# lebron = NBAPlayer('LeBron James')
+# print(lebron.getAllTweetsAsDict())
