@@ -10,27 +10,27 @@ class TweetsAnalyzer:
         resultsDF = sa.getSentimentAnalysis(tweetsList)
         # Combine resultsDF with self.tweetsAndStats.copy()
         # if regression:
-        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF)
+        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF, featureColumnIndexes))
         # else:
-        #     # Perform one other type of analysis
+        #     resultsDictOrDF = __performOtherAnalysis(resultsDF, featureColumnIndexes)
         # return resultsDictOrDF
 
     def getEmotionAnalysis(self, regression=True):
         resultsDF = ea.getEmotionAnalysis(self.tweetsAndStatsDF.copy())
         # Combine resultsDF with self.tweetsAndStats.copy()
         # if regression:
-        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF)
+        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF, featureColumnIndexes))
         # else:
-        #     # Perform one other type of analysis
+        #     resultsDictOrDF = __performOtherAnalysis(resultsDF, featureColumnIndexes)
         # return resultsDictOrDF
 
     # def getEmbeddedAnalysis(self, regression=True):
         # resultsDF = the embedded method for getting the dataframe
         # Combine resultsDF with self.tweetsAndStats.copy()
         # if regression:
-        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF)
+        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF, featureColumnIndexes))
         # else:
-        #     # Perform one other type of analysis
+        #     resultsDictOrDF = __performOtherAnalysis(resultsDF, featureColumnIndexes)
         # return resultsDictOrDF
 
     def getCombinationAnalysis(self, tweetsList: list.__class__, regression=True):
@@ -39,9 +39,9 @@ class TweetsAnalyzer:
         # embedDF = ema.getEmbeddedAnalysis(self.tweetsAndStatsDF)
         # combine these three dfs with self.tweetsAndStats.copy()
         # if regression:
-        #     resultsDictOrDF = __performRegressionAnalysis(combinedDF)
+        #     resultsDictOrDF = __performRegressionAnalysis(combinedDF, featureColumnIndexes)
         # else:
-        #     # Perform one other type of analysis
+        #     resultsDictOrDF = __performOtherAnalysis(combinedDF, featureColumnIndexes)
         # return resultsDictOrDF
 
     def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes):
