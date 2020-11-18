@@ -2,7 +2,7 @@ import pandas as pd
 from nrclex import NRCLex
 
 
-def getEmotions(text):
+def __getEmotions(text):
     """
     Get emotion affect frequencies for the input text. The values returned are continuous numbers between 0 & 1.
     Values are returned for the following emotions: fear, anger, trust, surprise, sadness, disgust, joy, anticipation
@@ -18,11 +18,11 @@ def getEmotions(text):
     return emtionsDict
 
 
-def addEmotions(dataframe):
+def getEmotionAnalysis(dataframe):
     """
     Add emotion columns to dataframe
 
     :param dataframe: player dataframe with tweet column
     :return: A pandas dataframe with the emotion affects appended to the original dataframe
     """
-    return pd.concat([dataframe, pd.DataFrame([getEmotions(row.tweet) for i, row in dataframe.iterrows()])], axis=1)
+    return pd.concat([dataframe, pd.DataFrame([__getEmotions(row.Tweet) for i, row in dataframe.iterrows()])], axis=1)
