@@ -1,5 +1,6 @@
 import analyzers.sentiment_analyzer as sa
 import analyzers.emotion_analyzer as ea
+import pandas as pd
 
 
 class TweetsAnalyzer:
@@ -8,7 +9,14 @@ class TweetsAnalyzer:
 
     def getSentimentAnalysis(self, tweetsList: list.__class__, regression=True):
         resultsDF = sa.getSentimentAnalysis(tweetsList)
-        # Combine resultsDF with self.tweetsAndStats.copy()
+        print("Results\n", resultsDF.index)
+        mergedDF = pd.merge(
+            left=self.tweetsAndStatsDF.copy(),
+            right=resultsDF,
+            left_index=True,
+            right_index=True
+        )
+        print("Merged\n", mergedDF)
         # if regression:
         #     resultsDictOrDF = __performRegressionAnalysis(resultsDF, featureColumnIndexes))
         # else:

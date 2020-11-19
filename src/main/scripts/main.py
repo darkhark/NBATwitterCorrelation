@@ -23,7 +23,7 @@ def startAnalysis(analysisType, df, tweetsList, useRegres):
 
 allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers()
 print("Just a few more things to collect...")
-allTweetsDict = nba_commisioner.getAllTweetsAllPlayersAsDict()
+allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
 while True:
     try:
@@ -83,10 +83,10 @@ while True:
         if singlePlayer:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
-            playerTweetDocList = []  # player.getTweetsAsTextDocumentInputList()
+            playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
             resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, useRegression)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsDict, useRegression)
+            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, useRegression)
 
         if resultsDictOrDF == "q":
             break
