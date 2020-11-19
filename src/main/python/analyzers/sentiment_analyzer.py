@@ -55,3 +55,10 @@ def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
 # textDocument = TextDocumentInput(id="746573683658463839", text="I am scoring some points in tonight's game")
 # tweetAnalyzer = sentiment_analysis(textDocument)
 # print(tweetAnalyzer)
+
+# Possible solution
+# documents = []
+# for i, row in allTweetsAndStatsDF.iterrows():
+#     documents.append({"id": i, "language": "en", "text": row.Tweet})
+#
+# response = client.analyze_sentiment(documents=documents)[0]
