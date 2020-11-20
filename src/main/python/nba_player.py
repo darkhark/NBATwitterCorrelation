@@ -1,3 +1,5 @@
+from azure.ai.textanalytics import TextDocumentInput
+
 import loaders.twitter_handle_loader as thl
 import loaders.nba_data_loader as ndl
 import loaders.twitter_data_loader as tdl
@@ -156,6 +158,18 @@ class NBAPlayer:
                 combinedTweetsDF = combinedTweetsDF.append(tweetsDF)
         tweetsDict = dict(zip(combinedTweetsDF.index, combinedTweetsDF['Tweet']))
         return tweetsDict
+
+    def getAllTweetsAsTextDocumentInputs(self):
+        """
+        @return: A list of all tweets as individual TextDocumentInputs for sentiment analysis.
+        @rtype: list
+        """
+        textDocumentInputsList = list()
+        tweetsDict = self.getAllTweetsAsDict()
+        for tweetId in tweetsDict:
+            textDocumentInputsList.append(TextDocumentInput(id=tweetId, text=tweetsDict[tweetId]))
+        return textDocumentInputsList
+
 
 
 # pd.set_option('display.max_columns', None)

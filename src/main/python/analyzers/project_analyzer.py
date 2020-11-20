@@ -6,12 +6,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
+import pandas as pd
 
 
 class TweetsAnalyzer:
     def __init__(self, tweetsAndStatsDF):
         self.tweetsAndStatsDF = tweetsAndStatsDF
 
+    '''
     # def getSentimentAnalysis(self, tweetsList: list.__class__, regression=True):
     def getSentimentAnalysis(self, regression='1'):
         # resultsDF = sa.getSentimentAnalysis(tweetsList)
@@ -22,6 +24,20 @@ class TweetsAnalyzer:
         #     resultsDictOrDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes)
         # elif regression == '2':
         #     resultsDictOrDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes)
+    '''
+
+    def getSentimentAnalysis(self, tweetsList: list.__class__, regression=True):
+        resultsDF = sa.getSentimentAnalysis(tweetsList)
+        print("Results\n", resultsDF.index)
+        mergedDF = pd.merge(
+            left=self.tweetsAndStatsDF.copy(),
+            right=resultsDF,
+            left_index=True,
+            right_index=True
+        )
+        print("Merged\n", mergedDF)
+        # if regression:
+        #     resultsDictOrDF = __performRegressionAnalysis(resultsDF, featureColumnIndexes))
         # else:
         #     resultsDictOrDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
         # return resultsDictOrDF

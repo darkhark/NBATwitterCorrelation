@@ -43,6 +43,19 @@ def getAllTweetsAllPlayersAsDict():
     return tweetDict
 
 
+def getAllTweetsAllPlayersAsTextDocumentInputList():
+    """
+    Used for sentiment analysis.
+    @return: A one dimensional list of all tweets by every player as TextDocumentInput objects
+    @rtype: list
+    """
+    textDocListAll = list()
+    for player in NBAPlayer.allPlayers.values():
+        for textDoc in player.getAllTweetsAsTextDocumentInputs():
+            textDocListAll.append(textDoc)
+    return textDocListAll
+
+
 # Test Code
 # print(getAllStatsAndTweetsAllPlayers(), "------------------------------------------------------------")
 # print(getAllTweetsAllPlayersAsDict())

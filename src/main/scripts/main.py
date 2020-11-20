@@ -25,7 +25,7 @@ def startAnalysis(analysisType, df, tweetsList, useRegres='1'):
 # allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
 allTweetsAndStatsDF = pd.read_csv('/home/minasonbol/PycharmProjects/UCF_MSDA/FALL_2020/CAP6307_Advanced_Text_Mining/PROJECT/nba_nlp/allTweetsAndStatsDF.csv')
 print("Just a few more things to collect...")
-allTweetsDict = nba_commisioner.getAllTweetsAllPlayersAsDict()
+allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
 while True:
     try:
@@ -84,11 +84,10 @@ while True:
         if singlePlayer:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
-            # playerTweetDocList = []  # player.getTweetsAsTextDocumentInputList()
-            playerTweetDocList = list(playerDF.Tweet)
+            playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
             resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, useRegression)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsDict, useRegression)
+            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, useRegression)
 
         if predictType == "q":
             break
