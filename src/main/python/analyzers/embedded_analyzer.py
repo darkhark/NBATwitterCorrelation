@@ -3,8 +3,8 @@ import pandas as pd
 
 
 print('Loading global sentence embedder...')
-module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
-# module_url = "/home/minaso nbol/PycharmProjects/Text_Mining/universal-sentence-encoder_4"
+# module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+module_url = "/home/minasonbol/PycharmProjects/Text_Mining/universal-sentence-encoder_4"
 model = hub.load(module_url)
 print("module %s loaded" % module_url)
 

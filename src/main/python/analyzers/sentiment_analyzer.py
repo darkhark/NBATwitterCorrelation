@@ -34,7 +34,7 @@ def __formatresponse(responseList) -> pd.DataFrame:
     sentiment_df = pd.DataFrame.from_records(cleanresponse, index=[0])
     return sentiment_df
 
-
+'''
 def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
     """
     Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
@@ -47,6 +47,24 @@ def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
     tweets = tweet
     client = __authenticate(_key, _endpoint)
     response = client.analyze_sentiment(documents=tweets)[0]
+    tweetdf = __formatresponse(response)
+    return tweetdf
+'''
+
+def getSentimentAnalysis(dataframe):
+    """
+    Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
+
+    @param tweet: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
+    language.
+    @return: A dataframe containing columns negative, neutral, positive,tweet,tweetID with a made up index
+    @rtype: Dataframe
+    """
+    documents = []
+    for i, row in dataframe.iterrows():
+        documents.append({"id": i, "language": "en", "text": row.Tweet})
+    client = __authenticate(_key, _endpoint)
+    response = client.analyze_sentiment(documents=documents)[0]
     tweetdf = __formatresponse(response)
     return tweetdf
 

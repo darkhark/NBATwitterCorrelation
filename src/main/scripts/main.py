@@ -9,7 +9,8 @@ import traceback as tb
 def startAnalysis(analysisType, df, tweetsList, useRegres='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
-        return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
+        # return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
+        return analyzer.getSentimentAnalysis(regression=useRegres)
     elif analysisType == "2":
         return analyzer.getEmotionAnalysis(regression=useRegres)
     elif analysisType == "3":
@@ -21,7 +22,8 @@ def startAnalysis(analysisType, df, tweetsList, useRegres='1'):
     return pd.DataFrame()
 
 
-allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
+# allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
+allTweetsAndStatsDF = pd.read_csv('/home/minasonbol/PycharmProjects/UCF_MSDA/FALL_2020/CAP6307_Advanced_Text_Mining/PROJECT/nba_nlp/allTweetsAndStatsDF.csv')
 print("Just a few more things to collect...")
 allTweetsDict = nba_commisioner.getAllTweetsAllPlayersAsDict()
 
