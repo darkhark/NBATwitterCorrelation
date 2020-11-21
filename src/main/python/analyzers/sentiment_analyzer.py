@@ -1,56 +1,87 @@
 import pandas as pd
-# pip install --upgrade azure-ai-textanalytics
-from azure.ai.textanalytics import TextAnalyticsClient
-from azure.core.credentials import AzureKeyCredential
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-_key = "adc96f39ac2a4918a1f462b5bf8674b8"
-_endpoint = "https://nbatwittersentiment.cognitiveservices.azure.com/"
+sid = SentimentIntensityAnalyzer()
 
-
-def __authenticate(key:str, endpoint:str):
-    # Authentication
-    ta_credential = AzureKeyCredential(key)
-    client = TextAnalyticsClient(
-        endpoint=endpoint,
-        credential=ta_credential,
-        api_version='TextAnalyticsApiVersion.V3_0')
-    return client
-
-
-def __formatResponse(responseList) -> pd.DataFrame:
+def __getSentiment(tweet):
     """
-    Using the data retrieved from the Sentiment Analyzer, a formatted dataframe is returned containing the results
-    and the original data. The results are appended to the end.
-    @param responseList:
-    @return:
-    @rtype:
+    Get sentiment for the input text. The values returned are continuous numbers between 0 & 1.
+    Values are returned for the following sentiments: neutral, negative, positive
+
+    :param text: the input text
+    :return: a dict with a continuous value between 0-1 for each emotion
     """
-    columns = ['positive', 'neutral', 'negative']
-    cleanResponse = {}
-    for response in responseList:
-        cleanResponse[response.id] = [response.confidence_scores.positive,
-                                      response.confidence_scores.neutral,
-                                      response.confidence_scores.negative]
-    sentiment_df = pd.DataFrame.from_dict(cleanResponse, orient='index', columns=columns)
-    return sentiment_df
+    sentiment = sid.polarity_scores(tweet)
+    sentimentDict = {'neutral': sentiment['neu'], 'negative': sentiment['neg'], 'positive': sentiment['pos']}
+    return sentimentDict
 
 
 def getSentimentAnalysis(dataframe):
     """
-    Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
+    Add sentiments columns to dataframe
 
-    @param tweet: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
-    language.
-    @return: A dataframe containing columns negative, neutral, positive,tweet,tweetID with a made up index
-    @rtype: Dataframe
+    :param dataframe: player dataframe with tweet column
+    :return: A pandas dataframe with the sentiments appended to the original dataframe
     """
-    documents = []
-    for i, row in dataframe.iterrows():
-        documents.append({"id": i, "language": "en", "text": row.Tweet})
-    client = __authenticate(_key, _endpoint)
-    response = client.analyze_sentiment(documents=documents)[0]
-    tweetdf = __formatresponse(response)
-    return tweetdf
+    return pd.concat([dataframe,
+                      pd.DataFrame([__getSentiment(row.Tweet) for i, row in dataframe.iterrows()],
+                                   index=[i for i, row in dataframe.iterrows()])],
+                     axis=1)
+
+# Sentiment analysis using azure
+# import pandas as pd
+# # pip install --upgrade azure-ai-textanalytics
+# from azure.ai.textanalytics import TextAnalyticsClient
+# from azure.core.credentials import AzureKeyCredential
+#
+# _key = "adc96f39ac2a4918a1f462b5bf8674b8"
+# _endpoint = "https://nbatwittersentiment.cognitiveservices.azure.com/"
+#
+#
+# def __authenticate(key:str, endpoint:str):
+#     # Authentication
+#     ta_credential = AzureKeyCredential(key)
+#     client = TextAnalyticsClient(
+#         endpoint=endpoint,
+#         credential=ta_credential,
+#         api_version='TextAnalyticsApiVersion.V3_0')
+#     return client
+#
+#
+# def __formatResponse(responseList) -> pd.DataFrame:
+#     """
+#     Using the data retrieved from the Sentiment Analyzer, a formatted dataframe is returned containing the results
+#     and the original data. The results are appended to the end.
+#     @param responseList:
+#     @return:
+#     @rtype:
+#     """
+#     columns = ['positive', 'neutral', 'negative']
+#     cleanResponse = {}
+#     for response in responseList:
+#         cleanResponse[response.id] = [response.confidence_scores.positive,
+#                                       response.confidence_scores.neutral,
+#                                       response.confidence_scores.negative]
+#     sentiment_df = pd.DataFrame.from_dict(cleanResponse, orient='index', columns=columns)
+#     return sentiment_df
+#
+#
+# def getSentimentAnalysis(dataframe):
+#     """
+#     Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
+#
+#     @param tweet: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
+#     language.
+#     @return: A dataframe containing columns negative, neutral, positive,tweet,tweetID with a made up index
+#     @rtype: Dataframe
+#     """
+#     documents = []
+#     for i, row in dataframe.iterrows():
+#         documents.append({"id": i, "language": "en", "text": row.Tweet})
+#     client = __authenticate(_key, _endpoint)
+#     response = client.analyze_sentiment(documents=documents)[0]
+#     tweetdf = __formatresponse(response)
+#     return tweetdf
 
 # def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
 #     """

@@ -16,13 +16,14 @@ def startAnalysis(analysisType, df, tweetsList, regressionMethod='1'):
     elif analysisType == "3":
         return analyzer.getEmbeddedAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "4":
-        return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
+        # return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
+        return analyzer.getCombinationAnalysis(regressionMethod=regressionMethod)
     else:
         print("Invalid value entered, please try again.")
     return pd.DataFrame()
 
 
-allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
+allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=False)
 print("Just a few more things to collect...")
 allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
