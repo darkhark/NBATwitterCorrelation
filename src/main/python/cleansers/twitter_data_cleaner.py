@@ -3,12 +3,12 @@ from pandas import DataFrame
 from nltk.corpus import stopwords
 import numpy as np
 import re
-
 import nltk
 # nltk.download('stopwords')  # Uncomment if needed
 # nltk.download("punkt")  # Uncomment if needed
-import pandas as pd  # test only
-import loaders.twitter_data_loader as tdl  # for test code
+
+# import pandas as pd  # test only
+# import loaders.twitter_data_loader as tdl  # for test code
 
 emoji_regrex_pattern = re.compile(pattern="["
                                           u"\U0001F600-\U0001F64F"  # emoticons
