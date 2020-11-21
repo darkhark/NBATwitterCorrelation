@@ -6,22 +6,23 @@ import pandas as pd
 import traceback as tb
 
 
-def startAnalysis(analysisType, df, tweetsList, useRegres):
+def startAnalysis(analysisType, df, tweetsList, regressionMethod='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
-        return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
+        # return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
+        return analyzer.getSentimentAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "2":
-        return analyzer.getEmotionAnalysis(regression=useRegres)
-    # elif analysisType == "3":
-    #     return analyzer.getEmbeddedAnalysis(regression=useRegres)
+        return analyzer.getEmotionAnalysis(regressionMethod=regressionMethod)
+    elif analysisType == "3":
+        return analyzer.getEmbeddedAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "4":
-        return analyzer.getCombinationAnalysis(tweetsList, regression=useRegres)
+        return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
     else:
         print("Invalid value entered, please try again.")
     return pd.DataFrame()
 
 
-allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers()
+allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
 print("Just a few more things to collect...")
 allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
@@ -66,16 +67,13 @@ while True:
         else:
             int(analysis)
 
-        predictType = input("Would you like to run using regression (1) or the other (2) to predict outcomes?\n")
+        predictType = input("Would you like to run using LinearRegression (1) or MLP (2) or RandomForest (3)"
+                            " to predict outcomes?\n")
 
         if predictType == "q":
             break
         else:
             int(predictType)
-
-        useRegression = True
-        if predictType == "2":
-            useRegression = False
 
         print("Starting analysis based on the values entered...")
 
@@ -84,16 +82,12 @@ while True:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, useRegression)
+            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictType)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, useRegression)
-
-        if resultsDictOrDF == "q":
-            break
+            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, predictType)
 
         print("Resulting analysis measurements:")
         print(resultsDictOrDF)
-
 
         ### Create visualizations ###
 
