@@ -1,11 +1,13 @@
+from nltk import WordNetLemmatizer, pos_tag
 from pandas import DataFrame
 from nltk.corpus import stopwords
 import numpy as np
 import re
-
-# import nltk
+import nltk
 # nltk.download('stopwords')  # Uncomment if needed
-# import pandas as pd # test only
+# nltk.download("punkt")  # Uncomment if needed
+
+# import pandas as pd  # test only
 # import loaders.twitter_data_loader as tdl  # for test code
 
 emoji_regrex_pattern = re.compile(pattern="["
@@ -41,6 +43,7 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
         .map(lambda tweet: emoji_regrex_pattern.sub(r'', tweet)) \
         .map(lambda tweet: tweet.lower()) \
         .map(lambda tweet: re.sub(stopwordsRegexPattern, '', tweet)) \
+        .map(lambda tweet: __getLemmatizedTweet(tweet)) \
         .map(lambda tweet: __removeExcessiveSpace(tweet))
     cleanDF = cleanDF.replace(r'^\s*$', np.nan, regex=True)
     cleanDF = cleanDF.dropna(subset=['Tweet'])
@@ -49,14 +52,30 @@ def cleanTweets(df: DataFrame.__class__) -> DataFrame.__class__:
     return cleanDF
 
 
-def __removeExcessiveSpace(tweet):
+def __getLemmatizedTweet(tweet: str):
+    tokenizedWordsInTweet = nltk.word_tokenize(tweet)
+    lemmatizer = WordNetLemmatizer()
+    lemmatized_tweet = ""
+    for word, tag in pos_tag(tokenizedWordsInTweet):
+        if tag.startswith('NN'):
+            pos = 'n'
+        elif tag.startswith('VB'):
+            pos = 'v'
+        else:
+            pos = 'a'
+        lemmatized_tweet += " " + lemmatizer.lemmatize(word, pos)
+    return lemmatized_tweet
+
+
+def __removeExcessiveSpace(tweet: str):
     while "  " in tweet:
         tweet = tweet.replace("  ", " ")
+        tweet.strip()
     return tweet
 
 
 # pd.set_option('display.max_columns', None)
-# tweetsDF = tdl.getPlayerTweetsAsDF('JHarden13', '2018-10-12', '2019-04-10')
-# print(tweetsDF)
+# tweetsDF = tdl.getPlayerTweetsAsDF('KingJames', '2018-10-12', '2019-04-10')
+# print(tweetsDF['Tweet'])
 # tweetsDF = cleanTweets(tweetsDF)
-# print(tweetsDF)
+# print('\nCleaned Tweet\n', tweetsDF['Tweet'])
