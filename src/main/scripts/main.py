@@ -22,7 +22,7 @@ def startAnalysis(analysisType, df, tweetsList, regressionMethod='1'):
     return pd.DataFrame()
 
 
-allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
+allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=False)
 print("Just a few more things to collect...")
 allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 

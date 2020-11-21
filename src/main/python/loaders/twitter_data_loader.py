@@ -18,7 +18,7 @@ def getPlayerTweets(handle: str, since: str, until: str) -> dict:
 def getPlayerTweetsAsDF(handle: str, since: str, until: str) -> DataFrame.__class__:
     tweetObjectsDict = getPlayerTweets(handle, since, until)
     tweetsDict = __getTweetsDatesAndIDsOnly(tweetObjectsDict)
-    return DataFrame.from_dict(tweetsDict, orient='index', columns=['TweetDate', 'Tweet'])
+    return DataFrame.from_dict(tweetsDict, orient='index', columns=['TweetDate', 'Tweet']).sort_values('TweetDate')
 
 
 def __getTweetsDatesAndIDsOnly(tweetsObjectDict: dict) -> dict:

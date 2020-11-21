@@ -13,7 +13,7 @@ def getAllStatsAndTweetsAllPlayers(updatePickle=False):
     allTweetsAndStatsDF = pd.DataFrame()
     print("Loading players...")
     if os.path.isfile(picklePath) and not updatePickle:
-        pd.read_pickle(picklePath)
+        allTweetsAndStatsDF = pd.read_pickle(picklePath)
     else:
         for name in thl.getAllTwitterHandles().keys():
             print('Loaded', name + "'s", 'tweets and stats.')

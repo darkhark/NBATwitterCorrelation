@@ -12,7 +12,6 @@ class TweetsAnalyzer:
     def __init__(self, tweetsAndStatsDF):
         self.tweetsAndStatsDF = tweetsAndStatsDF
 
-
     def getSentimentAnalysis(self, regressionMethod='1'):
         resultsDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF.copy())
         featureColumnIndexes = ['positive', 'neutral', 'ngeative']
