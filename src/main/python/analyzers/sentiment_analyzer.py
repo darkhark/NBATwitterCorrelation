@@ -49,7 +49,7 @@ def getSentimentAnalysis(dataframe):
         documents.append({"id": i, "language": "en", "text": row.Tweet})
     client = __authenticate(_key, _endpoint)
     response = client.analyze_sentiment(documents=documents)[0]
-    tweetdf = __formatresponse(response)
+    tweetdf = __formatResponse(response)
     return tweetdf
 
 # def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
