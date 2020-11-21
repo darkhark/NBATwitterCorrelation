@@ -77,17 +77,22 @@ while True:
 
         print("Starting analysis based on the values entered...")
 
-        resultsDictOrDF = pd.DataFrame()
+        resultsDF = pd.DataFrame()
         if singlePlayer:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictType)
+            resultsDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictType)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, predictType)
+            resultsDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, predictType)
 
         print("Resulting analysis measurements:")
-        print(resultsDictOrDF)
+        print(player.name) if singlePlayer else print('All players')
+        analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
+        print(analysisTypes[analysis])
+        predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
+        print(predictTypes[predictType])
+        print(resultsDF)
 
         ### Create visualizations ###
 
