@@ -7,32 +7,6 @@ _key = "adc96f39ac2a4918a1f462b5bf8674b8"
 _endpoint = "https://nbatwittersentiment.cognitiveservices.azure.com/"
 
 
-def getSentimentAnalysis(tweets: list.__class__) -> pd.DataFrame:
-    """
-    Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
-
-    @param tweets: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
-    language.
-    @return: A dataframe containing columns negative, neutral, positive with an index of tweetID
-    @rtype: Dataframe
-    """
-    responseDF = pd.DataFrame()
-    client = __authenticate(_key, _endpoint)
-    for group in __chunker(tweets, 10):
-        print("Group\n", group)
-        response = client.analyze_sentiment(documents=group)
-        if responseDF.empty:
-            responseDF = __formatResponse(response)
-        else:
-            responseDF.append(__formatResponse(response))
-    return responseDF
-
-
-def __chunker(seq, size):
-    # https://stackoverflow.com/a/434328/7658632
-    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-
-
 def __authenticate(key:str, endpoint:str):
     # Authentication
     ta_credential = AzureKeyCredential(key)
@@ -61,23 +35,6 @@ def __formatResponse(responseList) -> pd.DataFrame:
     return sentiment_df
 
 
-'''
-def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
-    """
-    Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
-
-    @param tweet: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
-    language.
-    @return: A dataframe containing columns negative, neutral, positive,tweet,tweetID with a made up index
-    @rtype: Dataframe
-    """
-    tweets = tweet
-    client = __authenticate(_key, _endpoint)
-    response = client.analyze_sentiment(documents=tweets)[0]
-    tweetdf = __formatresponse(response)
-    return tweetdf
-'''
-
 def getSentimentAnalysis(dataframe):
     """
     Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
@@ -95,16 +52,49 @@ def getSentimentAnalysis(dataframe):
     tweetdf = __formatresponse(response)
     return tweetdf
 
+# def getSentimentAnalysis(tweet: list.__class__) -> pd.DataFrame:
+#     """
+#     Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
+#
+#     @param tweet: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
+#     language.
+#     @return: A dataframe containing columns negative, neutral, positive,tweet,tweetID with a made up index
+#     @rtype: Dataframe
+#     """
+#     tweets = tweet
+#     client = __authenticate(_key, _endpoint)
+#     response = client.analyze_sentiment(documents=tweets)[0]
+#     tweetdf = __formatresponse(response)
+#     return tweetdf
+
+# def getSentimentAnalysis(tweets: list.__class__) -> pd.DataFrame:
+#     """
+#     Uses Microsoft Cognitive Service Text Analytics 3.0 to analyze text
+#
+#     @param tweets: A list of TextDocumentInput where the id is the tweetID and text is the tweet. English is the default
+#     language.
+#     @return: A dataframe containing columns negative, neutral, positive with an index of tweetID
+#     @rtype: Dataframe
+#     """
+#     responseDF = pd.DataFrame()
+#     client = __authenticate(_key, _endpoint)
+#     for group in __chunker(tweets, 10):
+#         print("Group\n", group)
+#         response = client.analyze_sentiment(documents=group)
+#         if responseDF.empty:
+#             responseDF = __formatResponse(response)
+#         else:
+#             responseDF.append(__formatResponse(response))
+#     return responseDF
+#
+#
+# def __chunker(seq, size):
+#     # https://stackoverflow.com/a/434328/7658632
+#     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
 
 # Test code
 # pd.set_option('display.max_columns', None)
 # lebron = NBAPlayer('LeBron James')
 # tweetAnalyzer = getSentimentAnalysis(lebron.getAllTweetsAsTextDocumentInputs())
 # print(tweetAnalyzer)
-
-# Possible solution
-# documents = []
-# for i, row in allTweetsAndStatsDF.iterrows():
-#     documents.append({"id": i, "language": "en", "text": row.Tweet})
-#
-# response = client.analyze_sentiment(documents=documents)[0]

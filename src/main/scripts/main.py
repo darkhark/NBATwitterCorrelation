@@ -6,24 +6,23 @@ import pandas as pd
 import traceback as tb
 
 
-def startAnalysis(analysisType, df, tweetsList, useRegres='1'):
+def startAnalysis(analysisType, df, tweetsList, regressionMethod='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
         # return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
-        return analyzer.getSentimentAnalysis(regression=useRegres)
+        return analyzer.getSentimentAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "2":
-        return analyzer.getEmotionAnalysis(regression=useRegres)
+        return analyzer.getEmotionAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "3":
-        return analyzer.getEmbeddedAnalysis(regression=useRegres)
+        return analyzer.getEmbeddedAnalysis(regressionMethod=regressionMethod)
     elif analysisType == "4":
-        return analyzer.getCombinationAnalysis(tweetsList, regression=useRegres)
+        return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
     else:
         print("Invalid value entered, please try again.")
     return pd.DataFrame()
 
 
-# allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
-allTweetsAndStatsDF = pd.read_csv('/home/minasonbol/PycharmProjects/UCF_MSDA/FALL_2020/CAP6307_Advanced_Text_Mining/PROJECT/nba_nlp/allTweetsAndStatsDF.csv')
+allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=True)
 print("Just a few more things to collect...")
 allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
@@ -76,8 +75,6 @@ while True:
         else:
             int(predictType)
 
-        useRegression = predictType
-
         print("Starting analysis based on the values entered...")
 
         resultsDictOrDF = pd.DataFrame()
@@ -85,16 +82,12 @@ while True:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, useRegression)
+            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictType)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, useRegression)
-
-        if predictType == "q":
-            break
+            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, predictType)
 
         print("Resulting analysis measurements:")
         print(resultsDictOrDF)
-
 
         ### Create visualizations ###
 
