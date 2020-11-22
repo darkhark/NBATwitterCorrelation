@@ -25,7 +25,5 @@ def getEmotionAnalysis(dataframe):
     :param dataframe: player dataframe with tweet column
     :return: A pandas dataframe with the emotion affects appended to the original dataframe
     """
-    return pd.concat([dataframe,
-                      pd.DataFrame([__getEmotions(row.Tweet) for i, row in dataframe.iterrows()],
-                                   index=[i for i, row in dataframe.iterrows()])],
-                     axis=1)
+    return dataframe.join(pd.DataFrame([__getEmotions(row.Tweet) for i, row in dataframe.iterrows()],
+                                       index=[i for i, row in dataframe.iterrows()]))

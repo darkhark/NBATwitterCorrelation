@@ -55,6 +55,7 @@ class TweetsAnalyzer:
         resultsDF = ea.getEmotionAnalysis(resultsDF)
         # get embedding features
         resultsDF = emb.getSentenceEmbeddingAsDF(resultsDF)
+        # define feature columns
         sentColumnIndexes = ['neutral', 'negative', 'positive']
         emotColumnIndexes = ['fear', 'anger', 'trust', 'surprise', 'sadness', 'disgust', 'joy', 'anticipation']
         embdColumnIndexes = [col for col in resultsDF.columns if col.startswith('embedding')]
@@ -67,17 +68,6 @@ class TweetsAnalyzer:
         else:
             resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
         return resultsDF
-
-    # def getCombinationAnalysis(self, tweetsList: list.__class__, regressionMethod=True):
-    #     sentDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF)
-    #     emotDF = ea.getEmotionAnalysis(self.tweetsAndStatsDF)
-    #     embedDF = emb.getEmbeddedAnalysis(self.tweetsAndStatsDF)
-    #     # combine these three dfs with self.tweetsAndStats.copy()
-    #     if regressionMethod:
-    #         resultsDF = __performRegressionAnalysis(combinedDF, featureColumnIndexes)
-    #     else:
-    #         resultsDF = __performOtherAnalysis(combinedDF, featureColumnIndexes)
-    #     return resultsDF
 
     def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes):
         """
@@ -96,8 +86,8 @@ class TweetsAnalyzer:
         lr = LinearRegression()
         lr.fit(X_train, y_train)
         prediction = lr.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_test', 'y_pred']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
 
     def __performMLPAnalysis(self, dfWithFeatures, featureColumnIndexes):
@@ -119,8 +109,8 @@ class TweetsAnalyzer:
                             shuffle=False)
         mlpc.fit(X_train, y_train)
         prediction = mlpc.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_test', 'y_pred']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
 
     def __performRandomForestAnalysis(self, dfWithFeatures, featureColumnIndexes):
@@ -140,6 +130,6 @@ class TweetsAnalyzer:
         randomForest = RandomForestRegressor(n_estimators=1000)
         randomForest.fit(X_train, y_train)
         prediction = randomForest.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_test', 'y_pred']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
