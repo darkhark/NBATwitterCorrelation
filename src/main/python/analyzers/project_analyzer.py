@@ -12,40 +12,40 @@ class TweetsAnalyzer:
     def __init__(self, tweetsAndStatsDF):
         self.tweetsAndStatsDF = tweetsAndStatsDF
 
-    def getSentimentAnalysis(self, regressionMethod='1'):
+    def getSentimentAnalysis(self, points, regressionMethod='1'):
         resultsDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF.copy())
         featureColumnIndexes = ['positive', 'neutral', 'ngeative']
         # Combine resultsDF with self.tweetsAndStats.copy()
         if regressionMethod == '1':
-            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
         elif regressionMethod == '2':
-            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes, points)
         else:
-            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
-    def getEmotionAnalysis(self, regressionMethod='1'):
+    def getEmotionAnalysis(self, points, regressionMethod='1'):
         resultsDF = ea.getEmotionAnalysis(self.tweetsAndStatsDF.copy())
         featureColumnIndexes = ['fear', 'anger', 'trust', 'surprise', 'sadness', 'disgust', 'joy', 'anticipation']
         # Combine resultsDF with self.tweetsAndStats.copy()
         if regressionMethod == '1':
-            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
         elif regressionMethod == '2':
-            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes, points)
         else:
-            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
-    def getEmbeddedAnalysis(self, regressionMethod='1'):
+    def getEmbeddedAnalysis(self, points, regressionMethod='1'):
         resultsDF = emb.getSentenceEmbeddingAsDF(self.tweetsAndStatsDF.copy())
         featureColumnIndexes = [col for col in resultsDF.columns if col.startswith('embedding')]
         # Combine resultsDF with self.tweetsAndStats.copy()
         if regressionMethod == '1':
-            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
         elif regressionMethod == '2':
-            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes, points)
         else:
-            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
     def getCombinationAnalysis(self, tweetsList: list.__class__, regressionMethod=True):
@@ -59,17 +59,21 @@ class TweetsAnalyzer:
         #     resultsDF = __performOtherAnalysis(combinedDF, featureColumnIndexes)
         # return resultsDictOrDF
 
-    def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes):
+    def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes, points: bool):
         """
         Performs regression analysis using linear regression
 
         @param dfWithFeatures: The data frame that will have the features from an analysis
         @param featureColumnIndexes: A list of the indexes that contain the feature columns
+        @param points: True if points should be predicted, false if accuracy should be predicted.
         @return: A dataframe of measurements of how well linear regression worked for the given dataframe
         @rtype: dictionary
         """
         X = dfWithFeatures[featureColumnIndexes]
-        y = dfWithFeatures['PlusMinusPoints']
+        if points:
+            y = dfWithFeatures['PlusMinusPoints']
+        else:
+            y = dfWithFeatures['PlusMinusAcc']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
         # Generating models
@@ -80,17 +84,21 @@ class TweetsAnalyzer:
         resultsDF.columns = ['y_pred', 'y_test']
         return resultsDF
 
-    def __performMLPAnalysis(self, dfWithFeatures, featureColumnIndexes):
+    def __performMLPAnalysis(self, dfWithFeatures, featureColumnIndexes, points):
         """
         Performs a regression analysis using an MLP NN
 
         @param dfWithFeatures: The data frame that will have the features from an analysis
         @param featureColumnIndexes: A list of the indexes that contain the feature columns
+        @param points: True if points should be predicted, false if accuracy should be predicted.
         @return: A dataframe of measurements of how well the MLP model worked for the given dataframe
         @rtype: Dataframe
         """
         X = dfWithFeatures[featureColumnIndexes]
-        y = dfWithFeatures['PlusMinusPoints']
+        if points:
+            y = dfWithFeatures['PlusMinusPoints']
+        else:
+            y = dfWithFeatures['PlusMinusAcc']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
         # Generating models
@@ -103,17 +111,21 @@ class TweetsAnalyzer:
         resultsDF.columns = ['y_pred', 'y_test']
         return resultsDF
 
-    def __performRandomForestAnalysis(self, dfWithFeatures, featureColumnIndexes):
+    def __performRandomForestAnalysis(self, dfWithFeatures, featureColumnIndexes, points):
         """
         Performs a regression analysis using an a random forest
 
         @param dfWithFeatures: The data frame that will have the features from an analysis
         @param featureColumnIndexes: A list of the indexes that contain the feature columns
+        @param points: True if points should be predicted, false if accuracy should be predicted.
         @return: A dataframe of measurements of how well the random forest model worked for the given dataframe
         @rtype: Dataframe
         """
         X = dfWithFeatures[featureColumnIndexes]
-        y = dfWithFeatures['PlusMinusPoints']
+        if points:
+            y = dfWithFeatures['PlusMinusPoints']
+        else:
+            y = dfWithFeatures['PlusMinusAcc']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
         # Generating models
