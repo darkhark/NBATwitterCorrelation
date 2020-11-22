@@ -48,7 +48,7 @@ class TweetsAnalyzer:
             resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
-    def getCombinationAnalysis(self, regressionMethod='1'):
+    def getCombinationAnalysis(self, points, regressionMethod='1'):
         # get sentiment features
         resultsDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF.copy())
         # get emotion features
@@ -62,11 +62,11 @@ class TweetsAnalyzer:
         featureColumnIndexes = sentColumnIndexes + emotColumnIndexes + embdColumnIndexes
         # combine these three dfs with self.tweetsAndStats.copy()
         if regressionMethod == '1':
-            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
         elif regressionMethod == '2':
-            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes, points)
         else:
-            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes)
+            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
     def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes, points: bool):
