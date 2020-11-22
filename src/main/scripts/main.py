@@ -93,9 +93,9 @@ while True:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDictOrDF = startAnalysis(analysis, playerDF, predictPoints, predictType)
+            resultsDF = startAnalysis(analysis, playerDF, predictPoints, predictType)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
+            resultsDF = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
 
         print("Resulting analysis measurements:")
         print(player.name) if singlePlayer else print('All players')
