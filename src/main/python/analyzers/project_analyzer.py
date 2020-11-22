@@ -14,7 +14,7 @@ class TweetsAnalyzer:
 
     def getSentimentAnalysis(self, points, regressionMethod='1'):
         resultsDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF.copy())
-        featureColumnIndexes = ['positive', 'neutral', 'ngeative']
+        featureColumnIndexes = ['neutral', 'negative', 'positive']
         # Combine resultsDF with self.tweetsAndStats.copy()
         if regressionMethod == '1':
             resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
@@ -48,16 +48,26 @@ class TweetsAnalyzer:
             resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
         return resultsDF
 
-    def getCombinationAnalysis(self, tweetsList: list.__class__, regressionMethod=True):
-        sentDF = sa.getSentimentAnalysis(tweetsList)
-        emotDF = ea.getEmotionAnalysis(self.tweetsAndStatsDF)
-        # embedDF = ema.getEmbeddedAnalysis(self.tweetsAndStatsDF)
+    def getCombinationAnalysis(self, points, regressionMethod='1'):
+        # get sentiment features
+        resultsDF = sa.getSentimentAnalysis(self.tweetsAndStatsDF.copy())
+        # get emotion features
+        resultsDF = ea.getEmotionAnalysis(resultsDF)
+        # get embedding features
+        resultsDF = emb.getSentenceEmbeddingAsDF(resultsDF)
+        # define feature columns
+        sentColumnIndexes = ['neutral', 'negative', 'positive']
+        emotColumnIndexes = ['fear', 'anger', 'trust', 'surprise', 'sadness', 'disgust', 'joy', 'anticipation']
+        embdColumnIndexes = [col for col in resultsDF.columns if col.startswith('embedding')]
+        featureColumnIndexes = sentColumnIndexes + emotColumnIndexes + embdColumnIndexes
         # combine these three dfs with self.tweetsAndStats.copy()
-        # if regressionMethod:
-        #     resultsDF = __performRegressionAnalysis(combinedDF, featureColumnIndexes)
-        # else:
-        #     resultsDF = __performOtherAnalysis(combinedDF, featureColumnIndexes)
-        # return resultsDictOrDF
+        if regressionMethod == '1':
+            resultsDF = self.__performRegressionAnalysis(resultsDF, featureColumnIndexes, points)
+        elif regressionMethod == '2':
+            resultsDF = self.__performMLPAnalysis(resultsDF, featureColumnIndexes, points)
+        else:
+            resultsDF = self.__performRandomForestAnalysis(resultsDF, featureColumnIndexes, points)
+        return resultsDF
 
     def __performRegressionAnalysis(self, dfWithFeatures, featureColumnIndexes, points: bool):
         """
@@ -80,8 +90,8 @@ class TweetsAnalyzer:
         lr = LinearRegression()
         lr.fit(X_train, y_train)
         prediction = lr.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_pred', 'y_test']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
 
     def __performMLPAnalysis(self, dfWithFeatures, featureColumnIndexes, points):
@@ -107,8 +117,8 @@ class TweetsAnalyzer:
                             shuffle=False)
         mlpc.fit(X_train, y_train)
         prediction = mlpc.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_pred', 'y_test']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
 
     def __performRandomForestAnalysis(self, dfWithFeatures, featureColumnIndexes, points):
@@ -132,6 +142,6 @@ class TweetsAnalyzer:
         randomForest = RandomForestRegressor(n_estimators=1000)
         randomForest.fit(X_train, y_train)
         prediction = randomForest.predict(X_test)
-        resultsDF = pd.concat([y_test, pd.Series(prediction, index=y_test.index, name='y_test')], axis=1)
-        resultsDF.columns = ['y_pred', 'y_test']
+        resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
+            pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF

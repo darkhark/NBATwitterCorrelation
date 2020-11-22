@@ -6,25 +6,22 @@ import pandas as pd
 import traceback as tb
 
 
-def startAnalysis(analysisType, df, tweetsList, points, regressionMethod='1'):
+def startAnalysis(analysisType, df, points, regressionMethod='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
-        # return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
         return analyzer.getSentimentAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "2":
         return analyzer.getEmotionAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "3":
         return analyzer.getEmbeddedAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "4":
-        return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
+        return analyzer.getCombinationAnalysis(points, regressionMethod=regressionMethod)
     else:
         print("Invalid value entered, please try again.")
     return pd.DataFrame()
 
 
 allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=False)
-print("Just a few more things to collect...")
-allTweetsTextDocumentInputsList = nba_commisioner.getAllTweetsAllPlayersAsTextDocumentInputList()
 
 while True:
     try:
@@ -90,18 +87,22 @@ while True:
 
         print("Starting analysis based on the values entered...")
 
-        resultsDictOrDF = pd.DataFrame()
+        resultsDF = pd.DataFrame()
         if singlePlayer:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDictOrDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictPoints, predictType)
+            resultsDF = startAnalysis(analysis, playerDF, predictPoints, predictType)
         else:
-            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF,
-                                            allTweetsTextDocumentInputsList, predictPoints, predictType)
+            resultsDF = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
 
         print("Resulting analysis measurements:")
-        print(resultsDictOrDF)
+        print(player.name) if singlePlayer else print('All players')
+        analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
+        print(analysisTypes[analysis])
+        predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
+        print(predictTypes[predictType])
+        print(resultsDF)
 
         ### Create visualizations ###
 
