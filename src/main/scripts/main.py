@@ -6,15 +6,14 @@ import pandas as pd
 import traceback as tb
 
 
-def startAnalysis(analysisType, df, tweetsList, regressionMethod='1'):
+def startAnalysis(analysisType, df, points, regressionMethod='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
-        # return analyzer.getSentimentAnalysis(tweetsList, regression=useRegres)
-        return analyzer.getSentimentAnalysis(regressionMethod=regressionMethod)
+        return analyzer.getSentimentAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "2":
-        return analyzer.getEmotionAnalysis(regressionMethod=regressionMethod)
+        return analyzer.getEmotionAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "3":
-        return analyzer.getEmbeddedAnalysis(regressionMethod=regressionMethod)
+        return analyzer.getEmbeddedAnalysis(points, regressionMethod=regressionMethod)
     elif analysisType == "4":
         # return analyzer.getCombinationAnalysis(tweetsList, regressionMethod=regressionMethod)
         return analyzer.getCombinationAnalysis(regressionMethod=regressionMethod)
@@ -29,12 +28,25 @@ while True:
     try:
         print("For each question, please answer using the number specified. Otherwise the program will crash and"
               " we'll have to start all over again. To quit, type 'q'. Thank you.\n")
+
+        predictPoints = input("Would you like to predict the points (1) or accuracy (2) "
+                              "of the amount above or below players' average?\n")
+
+        if predictPoints == "q":
+            break
+        elif predictPoints == "1":
+            predictPoints = True
+        elif predictPoints == "2":
+            predictPoints = False
+        elif 0 > int(predictPoints) > 2:
+            print("Invalid option selected. Try again.\n")
+
         allOrPlayer = input("Would you like to predict on one player (1) or all players (2)?\n")
 
         if allOrPlayer == "q":
             break
-        else:
-            int(allOrPlayer)
+        elif 0 > int(allOrPlayer) > 2:
+            print("Invalid option selected. Try again.\n")
 
         singlePlayer = False
         playerKey = 0
@@ -63,16 +75,16 @@ while True:
                          "1: Sentiment, 2: Emotion, 3: Embedding, 4: Combination\n")
         if analysis == "q":
             break
-        else:
-            int(analysis)
+        elif 0 > int(analysis) > 4:
+            print("Invalid option selected. Try again.\n")
 
         predictType = input("Would you like to run using LinearRegression (1) or MLP (2) or RandomForest (3)"
                             " to predict outcomes?\n")
 
         if predictType == "q":
             break
-        else:
-            int(predictType)
+        elif 0 > int(predictPoints) > 3:
+            print("Invalid option selected. Try again.\n")
 
         print("Starting analysis based on the values entered...")
 
@@ -81,9 +93,9 @@ while True:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDF = startAnalysis(analysis, playerDF, playerTweetDocList, predictType)
+            resultsDictOrDF = startAnalysis(analysis, playerDF, predictPoints, predictType)
         else:
-            resultsDF = startAnalysis(analysis, allTweetsAndStatsDF, allTweetsTextDocumentInputsList, predictType)
+            resultsDictOrDF = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
 
         print("Resulting analysis measurements:")
         print(player.name) if singlePlayer else print('All players')
