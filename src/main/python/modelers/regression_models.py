@@ -50,6 +50,15 @@ class TweetsModeler:
         }
         return tweetsModeler
 
+    def __getVariables(self):
+        np.random.seed(0)
+        X = self.dfWithFeatures[self.featureColumnIndexes]
+        if self.points:
+            y = self.dfWithFeatures['PlusMinusPoints']
+        else:
+            y = self.dfWithFeatures['PlusMinusAcc']
+        return train_test_split(X, y, test_size=0.33, random_state=42)
+
     def performRegressionAnalysis(self):
         """
         Performs regression analysis using linear regression
@@ -60,13 +69,7 @@ class TweetsModeler:
         @return: A dataframe of measurements of how well linear regression worked for the given dataframe
         @rtype: dictionary
         """
-        np.random.seed(0)
-        X = self.dfWithFeatures[self.featureColumnIndexes]
-        if self.points:
-            y = self.dfWithFeatures['PlusMinusPoints']
-        else:
-            y = self.dfWithFeatures['PlusMinusAcc']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+        X_train, X_test, y_train, y_test = self.__getVariables()
 
         # Generating models
         lr = LinearRegression()
@@ -86,13 +89,7 @@ class TweetsModeler:
         @return: A dataframe of measurements of how well the MLP model worked for the given dataframe
         @rtype: Dataframe
         """
-        np.random.seed(0)
-        X = self.dfWithFeatures[self.featureColumnIndexes]
-        if self.points:
-            y = self.dfWithFeatures['PlusMinusPoints']
-        else:
-            y = self.dfWithFeatures['PlusMinusAcc']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+        X_train, X_test, y_train, y_test = self.__getVariables()
 
         # Generating models
         mlpc = MLPRegressor(hidden_layer_sizes=(100, 200, 100), activation='relu',
@@ -114,13 +111,7 @@ class TweetsModeler:
         @return: A dataframe of measurements of how well the random forest model worked for the given dataframe
         @rtype: Dataframe
         """
-        np.random.seed(0)
-        X = self.dfWithFeatures[self.featureColumnIndexes]
-        if self.points:
-            y = self.dfWithFeatures['PlusMinusPoints']
-        else:
-            y = self.dfWithFeatures['PlusMinusAcc']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+        X_train, X_test, y_train, y_test = self.__getVariables()
 
         # Generating models
         randomForest = RandomForestRegressor(n_estimators=1000)
