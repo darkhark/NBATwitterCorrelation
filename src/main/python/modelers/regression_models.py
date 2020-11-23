@@ -21,13 +21,13 @@ class TweetsModeler:
     @classmethod
     def getModelResutls(cls, dfWithFeatures, featureColumnIndexes, points, regressionMethod):
         """
-        Returns an object with attr
+        Returns an tweetsModeler object. the object has two important attributes, regResutlsDF and resultsDict
 
         @param dfWithFeatures: The data frame that will have the features from an analysis
         @param featureColumnIndexes: A list of the indexes that contain the feature columns
         @param points: True if points should be predicted, false if accuracy should be predicted.
         @param regressionMethod: An integer value signalling which regression method to be used
-        @return: An object with attributes for results dataframe and regression results
+        @return: An object with attributes for predictions dataframe and regression results
         @rtype: object
         """
         args = Namespace(
