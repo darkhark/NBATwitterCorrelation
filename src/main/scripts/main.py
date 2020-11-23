@@ -21,6 +21,16 @@ def startAnalysis(analysisType, df, points, regressionMethod='1'):
     return pd.DataFrame()
 
 
+def print_results(singlePlayer, player, analysis, results):
+    print(player.name) if singlePlayer else print('All players')
+    analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
+    print(analysisTypes[analysis])
+    predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
+    print(predictTypes[results.regressionMethod])
+    print(results.regResultsDF.head())
+    print(results.resultsDict)
+
+
 allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=False)
 
 while True:
@@ -92,17 +102,13 @@ while True:
             player = NBAPlayer(playerNameDict[playerKey])
             playerDF = player.getAllStatsAndTweetsDF()
             playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            resultsDF = startAnalysis(analysis, playerDF, predictPoints, predictType)
+            results = startAnalysis(analysis, playerDF, predictPoints, predictType)
         else:
-            resultsDF = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
+            player = None
+            results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
 
         print("Resulting analysis measurements:")
-        print(player.name) if singlePlayer else print('All players')
-        analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
-        print(analysisTypes[analysis])
-        predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
-        print(predictTypes[predictType])
-        print(resultsDF)
+        print_results(singlePlayer, player, analysis, results)
 
         ### Create visualizations ###
 
