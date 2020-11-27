@@ -120,3 +120,12 @@ class TweetsModeler:
         resultsDF = pd.DataFrame(y_test.rename('y_test')).join(
             pd.DataFrame(pd.Series(prediction, index=y_test.index, name='y_pred')))
         return resultsDF
+
+    def print_results(self, singlePlayer, player, analysis):
+        print(player.name) if singlePlayer else print('All players')
+        analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
+        print(analysisTypes[analysis])
+        predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
+        print(predictTypes[self.regressionMethod])
+        print(self.regResultsDF.head())
+        print(self.resultsDict)

@@ -4,6 +4,7 @@ import analyzers.project_analyzer as pa
 import loaders.twitter_handle_loader as thl
 import pandas as pd
 import traceback as tb
+import plotly.express as px
 
 
 def startAnalysis(analysisType, df, points, regressionMethod='1'):
@@ -19,16 +20,6 @@ def startAnalysis(analysisType, df, points, regressionMethod='1'):
     else:
         print("Invalid value entered, please try again.")
     return pd.DataFrame()
-
-
-def print_results(singlePlayer, player, analysis, results):
-    print(player.name) if singlePlayer else print('All players')
-    analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
-    print(analysisTypes[analysis])
-    predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
-    print(predictTypes[results.regressionMethod])
-    print(results.regResultsDF.head())
-    print(results.resultsDict)
 
 
 allTweetsAndStatsDF = nba_commisioner.getAllStatsAndTweetsAllPlayers(updatePickle=False)
@@ -80,6 +71,7 @@ while True:
         else:
             int(playerKey)
 
+        '''
         analysis = input("Which analysis would you like to run?  "
                          "1: Sentiment, 2: Emotion, 3: Embedding, 4: Combination\n")
         if analysis == "q":
@@ -87,6 +79,7 @@ while True:
         elif 0 > int(analysis) > 4:
             print("Invalid option selected. Try again.\n")
 
+        
         predictType = input("Would you like to run using LinearRegression (1) or MLP (2) or RandomForest (3)"
                             " to predict outcomes?\n")
 
@@ -94,26 +87,45 @@ while True:
             break
         elif 0 > int(predictPoints) > 3:
             print("Invalid option selected. Try again.\n")
+        '''
 
-        print("Starting analysis based on the values entered...")
+        analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
+        predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
+        analysisResults = dict()
+        regressionResults = dict()
+        # analysisResultsDF = pd.DataFrame(columns=['analysis_type', 'regressions_model', 'r2', 'mse'])
+        analysisResultsDF = pd.DataFrame()
+        for analysis in analysisTypes:
+            for predictType in predictTypes.keys():
+                resultList = list()
+                resultList.append(analysisTypes[analysis])
+                resultList.append(predictTypes[predictType])
+                print("Starting analysis based on the values entered...")
+                resultsDF = pd.DataFrame()
+                if singlePlayer:
+                    player = NBAPlayer(playerNameDict[playerKey])
+                    playerDF = player.getAllStatsAndTweetsDF()
+                    playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
+                    results = startAnalysis(analysis, playerDF, predictPoints, predictType)
+                    # regressionResults[predictTypes[predictType]] = results.resultsDict
+                else:
+                    player = None
+                    results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
+                resultList.extend([results.resultsDict[result] for result in results.resultsDict.keys()])
+                analysisResultsDF = analysisResultsDF.append([resultList])
+            # analysisResults[analysisTypes[analysis]] = regressionResults
 
-        resultsDF = pd.DataFrame()
-        if singlePlayer:
-            player = NBAPlayer(playerNameDict[playerKey])
-            playerDF = player.getAllStatsAndTweetsDF()
-            playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-            results = startAnalysis(analysis, playerDF, predictPoints, predictType)
-        else:
-            player = None
-            results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, predictType)
+        analysisResultsDF.columns = ['analysis_type', 'regressions_model', 'r2', 'mse']
 
         print("Resulting analysis measurements:")
-        print_results(singlePlayer, player, analysis, results)
+        results.print_results(singlePlayer, player, analysis)
 
         ### Create visualizations ###
-
         # import RegressionVisualizer
         # RegressionVisualization.plot(allPlayersModeler)
+        fig = px.bar(analysisResultsDF, x="regressions_model", y="mse", color="regressions_model",
+                     facet_col="analysis_type")
+        fig.show()
 
         # import ComparisonVisualizer
         # ComparisonVisualizer.comparePlot(allPlayersModeler, lebronModeler)
