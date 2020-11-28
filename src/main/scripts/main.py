@@ -123,9 +123,12 @@ while True:
         ### Create visualizations ###
         # import RegressionVisualizer
         # RegressionVisualization.plot(allPlayersModeler)
-        fig = px.bar(analysisResultsDF, x="regressions_model", y="mse", color="regressions_model",
+        fig_mse = px.bar(analysisResultsDF, x="regressions_model", y="mse", color="regressions_model",
                      facet_col="analysis_type")
-        fig.show()
+        fig_mse.show()
+        fig_r2 = px.bar(analysisResultsDF, x="regressions_model", y="r2", color="regressions_model",
+                     facet_col="analysis_type")
+        fig_r2.show()
 
         # import ComparisonVisualizer
         # ComparisonVisualizer.comparePlot(allPlayersModeler, lebronModeler)
