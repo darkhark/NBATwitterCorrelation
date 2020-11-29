@@ -1,9 +1,15 @@
+from pathlib import Path
 import tensorflow_hub as hub
 import pandas as pd
 
 
 print('Loading global sentence embedder...')
+# if you will be using the online version of the universal sentence encoder model, please note that it can take some time to download
 module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+
+# if you will be using a local copy of the universal sentence encoder model, make sure a copy resides in the same directory hosting the NBATwitterCorrelation
+# module_url = str(Path(__file__).parent.parent.parent.parent.parent.parent) + '/universal-sentence-encoder_4'
+
 model = hub.load(module_url)
 print("module %s loaded" % module_url)
 

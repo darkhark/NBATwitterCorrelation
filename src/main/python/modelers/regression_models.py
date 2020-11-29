@@ -15,11 +15,12 @@ class TweetsModeler:
         self.featureColumnIndexes = args.featureColumnIndexes
         self.points = args.points
         self.regressionMethod = args.regressionMethod
+        self.useHistory = args.useHistory
         self.regResultsDF = pd.DataFrame()
         self.resultsDict = dict()
 
     @classmethod
-    def getModelResutls(cls, dfWithFeatures, featureColumnIndexes, points, regressionMethod):
+    def getModelResutls(cls, dfWithFeatures, featureColumnIndexes, points, regressionMethod, useHistory):
         """
         Returns an tweetsModeler object. the object has two important attributes, regResutlsDF and resultsDict
 
@@ -35,6 +36,7 @@ class TweetsModeler:
             featureColumnIndexes=featureColumnIndexes,
             points=points,
             regressionMethod=regressionMethod,
+            useHistory=useHistory
         )
         tweetsModeler = cls(args)
         if tweetsModeler.regressionMethod == '1':
@@ -53,6 +55,8 @@ class TweetsModeler:
     def __getVariables(self):
         np.random.seed(0)
         X = self.dfWithFeatures[self.featureColumnIndexes]
+        if self.useHistory:
+            X.insert(0, 'previous', self.dfWithFeatures['PlusMinusPoints'].shift(periods=1).fillna(0).values, True)
         if self.points:
             y = self.dfWithFeatures['PlusMinusPoints']
         else:
