@@ -29,3 +29,10 @@ for our program.
 Do not worry about the unittest package for now. If in the
 future we decide to include testing, we will discuss it then because
 pybuilder requires a certain structure and specific file naming techniques.
+
+#### Important Note About the Universal Sentence Encoder Model
+
+This code uses TensorFlow's universal sentence encoder model as one of the analyzers. 
+The model is downloaded using tensorflow_hub module. Please note that this is a very
+large file, so it can take a few minutes to download (depending on your connection). 
+Please be patient while the model is downloaded.
