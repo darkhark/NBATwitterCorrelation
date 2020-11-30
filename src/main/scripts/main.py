@@ -9,25 +9,25 @@ import traceback as tb
 import plotly.express as px
 
 
-def startAnalysis(analysisType, df, points, useHistory, demo, regressionMethod='1'):
+def startAnalysis(analysisType, df, points, demo, regressionMethod='1'):
     analyzer = pa.TweetsAnalyzer(df)
     if analysisType == "1":
-        analysisReults = analyzer.getSentimentAnalysis(points, useHistory, regressionMethod=regressionMethod)
+        analysisReults = analyzer.getSentimentAnalysis(points, regressionMethod=regressionMethod)
         if demo:
             analyzer.sentimentPlot.show()
         return analysisReults
     elif analysisType == "2":
-        analysisReults = analyzer.getEmotionAnalysis(points, useHistory, regressionMethod=regressionMethod)
+        analysisReults = analyzer.getEmotionAnalysis(points, regressionMethod=regressionMethod)
         if demo:
             analyzer.emotionPlot.show()
         return analysisReults
     elif analysisType == "3":
-        analysisReults = analyzer.getEmbeddedAnalysis(points, useHistory, regressionMethod=regressionMethod)
+        analysisReults = analyzer.getEmbeddedAnalysis(points, regressionMethod=regressionMethod)
         if demo:
             analyzer.embeddingPlot.show()
         return analysisReults
     elif analysisType == "4":
-        return analyzer.getCombinationAnalysis(points, useHistory, regressionMethod=regressionMethod)
+        return analyzer.getCombinationAnalysis(points, regressionMethod=regressionMethod)
     else:
         print("Invalid value entered, please try again.")
 
@@ -97,17 +97,6 @@ while True:
 
         # if the demo mode is chosen continue with the questioning, else loop over all possible setups
         if expOrDemo:
-            useHistory = input("Would you like to include the player's performance history as a predictor variable (1) or not (2)?\n")
-
-            if useHistory == "q":
-                break
-            elif useHistory == "1":
-                useHistory = True
-            elif useHistory == "2":
-                useHistory = False
-            elif 0 > int(useHistory) > 2:
-                print("Invalid option selected. Try again.\n")
-
             analysis = input("Which analysis would you like to run?  "
                              "1: Sentiment, 2: Emotion, 3: Embedding, 4: Combination\n")
 
@@ -126,7 +115,6 @@ while True:
 
             print("Starting analysis based on the values entered...")
             resultList = list()
-            resultList.append(useHistory)
             resultList.append(analysis)
             resultList.append(predictType)
             analysisResultsDF = pd.DataFrame()
@@ -138,7 +126,7 @@ while True:
                 playerName = player.name
                 playerDF = player.getAllStatsAndTweetsDF()
                 playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-                results = startAnalysis(analysis, playerDF, predictPoints, useHistory, expOrDemo, predictType)
+                results = startAnalysis(analysis, playerDF, predictPoints, expOrDemo, predictType)
                 resultsDF.insert(0,
                                  results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
                                  predictTypes[predictType],
@@ -147,8 +135,7 @@ while True:
             else:
                 player = None
                 playerName = 'All'
-                results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, useHistory, expOrDemo,
-                                        predictType)
+                results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, expOrDemo, predictType)
                 resultsDF.insert(0,
                                  results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
                                  predictTypes[predictType],
@@ -157,48 +144,39 @@ while True:
             resultList.extend([results.resultsDict[result] for result in results.resultsDict.keys()])
             analysisResultsDF = analysisResultsDF.append([resultList])
         else:
-            useHistories = {'withHistory': True, 'withoutHistory': False}
             analysisTypes = {'1': 'Sentiment', '2': 'Emotion', '3': 'Embedded', '4': 'Combined'}
             predictTypes = {'1': 'LinearRegression', '2': 'MLP', '3': 'RandomForest'}
             analysisResultsDF = pd.DataFrame()
             resultsDF = pd.DataFrame()
-            for useHistory in useHistories.keys():
-                for analysis in analysisTypes:
-                    for predictType in predictTypes.keys():
-                        resultList = list()
-                        resultList.append(useHistory)
-                        resultList.append(analysisTypes[analysis])
-                        resultList.append(predictTypes[predictType])
-                        print("Starting analysis based on the values entered...")
-                        if singlePlayer:
-                            player = NBAPlayer(playerNameDict[playerKey])
-                            playerName = player.name
-                            playerDF = player.getAllStatsAndTweetsDF()
-                            playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
-                            results = startAnalysis(analysis, playerDF, predictPoints, useHistories[useHistory],
-                                                    expOrDemo, predictType)
-                            resultsDF.insert(0,
-                                             results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
-                                             predictTypes[predictType],
-                                             results.regResultsDF['y_pred'],
-                                             True)
-                        else:
-                            player = None
-                            playerName = 'All'
-                            results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints,
-                                                    useHistories[useHistory], expOrDemo, predictType)
-                            resultsDF.insert(0,
-                                             results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
-                                             predictTypes[predictType],
-                                             results.regResultsDF['y_pred'],
-                                             True)
-                        resultList.extend([results.resultsDict[result] for result in results.resultsDict.keys()])
-                        analysisResultsDF = analysisResultsDF.append([resultList])
+            for analysis in analysisTypes:
+                for predictType in predictTypes.keys():
+                    resultList = list()
+                    resultList.append(analysisTypes[analysis])
+                    resultList.append(predictTypes[predictType])
+                    print("Starting analysis based on the values entered...")
+                    if singlePlayer:
+                        player = NBAPlayer(playerNameDict[playerKey])
+                        playerName = player.name
+                        playerDF = player.getAllStatsAndTweetsDF()
+                        playerTweetDocList = player.getAllTweetsAsTextDocumentInputs()
+                        results = startAnalysis(analysis, playerDF, predictPoints, expOrDemo, predictType)
+                        resultsDF.insert(0,
+                                        results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
+                                        predictTypes[predictType],
+                                        results.regResultsDF['y_pred'],
+                                        True)
+                    else:
+                        player = None
+                        playerName = 'All'
+                        results = startAnalysis(analysis, allTweetsAndStatsDF, predictPoints, expOrDemo, predictType)
+                        resultsDF.insert(0,
+                                        results.regResultsDF['y_pred'].name + '_' + analysisTypes[analysis] + '_' +
+                                        predictTypes[predictType],
+                                        results.regResultsDF['y_pred'],
+                                        True)
+                    resultList.extend([results.resultsDict[result] for result in results.resultsDict.keys()])
+                    analysisResultsDF = analysisResultsDF.append([resultList])
 
-        analysisResultsDF.columns = ['history', 'analysis_type', 'regressions_model', 'r2', 'mse']
-        resultsPath = str(Path(__file__).parent.parent.parent.parent.parent / "results/")
-        filename = '/analysisResultsDF_' + playerName.replace(' ', '')
-        analysisResultsDF.to_csv(resultsPath + filename + str(int(time.time())) + '.csv', index_label=False)
         resultsDF.insert(0,
                          'y_test',
                          results.regResultsDF['y_test'],
@@ -208,13 +186,17 @@ while True:
         results.print_results(singlePlayer, player, analysis)
 
         ### Create visualizations ###
+        if predictPoints:
+            title = 'Points'
+        else:
+            title = 'Accuracy'
         fig_mse = px.bar(analysisResultsDF, x="regressions_model", y="mse", color="regressions_model",
-                         facet_row='history', facet_col="analysis_type")
+                         facet_col="analysis_type", title='MSE - ' + title)
         fig_mse.show()
         fig_r2 = px.bar(analysisResultsDF, x="regressions_model", y="r2", color="regressions_model",
-                        facet_row='history', facet_col="analysis_type")
+                        facet_col="analysis_type", title='R2 - ' + title)
         fig_r2.show()
-        fig_box = px.box(resultsDF.melt(), x="variable", y="value", color="variable")
+        fig_box = px.box(resultsDF.melt(), x="variable", y="value", color="variable", title='Box Plot - ' + title)
         fig_box.show()
 
     except:  # Bare because we don't care wat the error is, just please don't make us reload the players
