@@ -185,6 +185,7 @@ while True:
         print("Resulting analysis measurements:")
         results.print_results(singlePlayer, player, analysis)
 
+        analysisResultsDF.columns = ['analysis_type', 'regressions_model', 'r2', 'mse']
         ### Create visualizations ###
         if predictPoints:
             title = 'Points'
